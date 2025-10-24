@@ -7,6 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
+import type { IRequest } from 'src/utility/common/interfaces/request.interface';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -24,12 +25,12 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
+  async login(@Request() req: IRequest) {
     return this.authService.accessToken(req.user);
   }
 
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Request() req: IRequest) {
     return req.user;
   }
 }

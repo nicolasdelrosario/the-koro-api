@@ -3,7 +3,7 @@ import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { PassportStrategy } from '@nestjs/passport';
 import type { Request } from 'express';
 import { Strategy } from 'passport-local';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     req: Request,
     email: string,
     password: string,
-  ): Promise<UserEntity> {
+  ): Promise<JwtPayload> {
     const contextId = ContextIdFactory.getByRequest(req);
 
     // "AuthService" is a request-scoped provider
@@ -32,6 +32,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return user;
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+      roles: user.roles,
+    };
+
+    return payload;
   }
 }

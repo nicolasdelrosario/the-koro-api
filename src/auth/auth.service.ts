@@ -40,13 +40,17 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    return this.accessToken(newUser);
+    const payload: JwtPayload = {
+      sub: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      roles: newUser.roles,
+    };
+
+    return this.accessToken(payload);
   }
 
-  async accessToken(user: UserEntity): Promise<{ access_token: string }> {
-    const { id, email, name, roles } = user;
-    const payload: JwtPayload = { sub: id, email, name, roles };
-
+  async accessToken(payload: JwtPayload): Promise<{ access_token: string }> {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
