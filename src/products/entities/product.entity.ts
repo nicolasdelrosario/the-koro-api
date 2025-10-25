@@ -1,4 +1,4 @@
-import { ProductEntity } from 'src/products/entities/product.entity';
+import { CategoryEntity } from 'src/categories/entities/category.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -6,14 +6,13 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('categories')
-export class CategoryEntity {
+@Entity('products')
+export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,6 +21,15 @@ export class CategoryEntity {
 
   @Column()
   description: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  price: number;
+
+  @Column()
+  stock: number;
+
+  @Column('simple-array')
+  images: string[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Timestamp;
@@ -34,13 +42,13 @@ export class CategoryEntity {
 
   @ManyToOne(
     () => UserEntity,
-    (user) => user.categories,
+    (user) => user.products,
   )
   addedBy: UserEntity;
 
-  @OneToMany(
-    () => ProductEntity,
-    (product) => product.category,
+  @ManyToOne(
+    () => CategoryEntity,
+    (category) => category.products,
   )
-  products: ProductEntity[];
+  category: CategoryEntity;
 }
