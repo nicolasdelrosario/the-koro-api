@@ -20,7 +20,11 @@ export class CategoriesService {
   ): Promise<CategoryEntity> {
     const category = this.categoryRepository.create({
       ...createCategoryDto,
-      addedBy: { id: user.sub } as UserEntity,
+      addedBy: {
+        id: user.sub,
+        name: user.name,
+        email: user.email,
+      } as UserEntity,
     });
 
     return await this.categoryRepository.save(category);
