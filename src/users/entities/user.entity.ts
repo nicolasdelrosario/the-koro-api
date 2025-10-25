@@ -1,9 +1,11 @@
+import { CategoryEntity } from 'src/categories/entities/category.entity';
 import { Role } from 'src/utility/common/enums/roles.enum';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
@@ -34,4 +36,10 @@ export class UserEntity {
 
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Timestamp;
+
+  @OneToMany(
+    () => CategoryEntity,
+    (category) => category.addedBy,
+  )
+  categories: CategoryEntity[];
 }
