@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { FindOneParams } from 'src/utility/common/entities/find-one-params.entity';
-import type { IRequest } from 'src/utility/common/interfaces/request.interface';
+import type { AuthenticatedRequest } from 'src/utility/common/interfaces/authenticated-request.interface';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
@@ -21,7 +21,7 @@ export class ProductsController {
 
   @Post()
   async create(
-    @Request() req: IRequest,
+    @Request() req: AuthenticatedRequest,
     @Body() createProductDto: CreateProductDto,
   ): Promise<ProductEntity> {
     return await this.productsService.create(createProductDto, req.user);

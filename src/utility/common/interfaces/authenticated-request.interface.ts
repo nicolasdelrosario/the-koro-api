@@ -5,6 +5,6 @@ import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
  * Extends the Express Request with `user` as JwtPayload.
  * Populated by LocalAuthGuard and JwtAuthGuard.
  */
-export interface IRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user: JwtPayload;
 }

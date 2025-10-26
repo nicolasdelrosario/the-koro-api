@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { FindOneParams } from 'src/utility/common/entities/find-one-params.entity';
-import type { IRequest } from 'src/utility/common/interfaces/request.interface';
+import type { AuthenticatedRequest } from 'src/utility/common/interfaces/authenticated-request.interface';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ReviewEntity } from './entities/review.entity';
@@ -21,7 +21,7 @@ export class ReviewsController {
 
   @Post()
   async create(
-    @Request() req: IRequest,
+    @Request() req: AuthenticatedRequest,
     @Body() createReviewDto: CreateReviewDto,
   ): Promise<ReviewEntity> {
     return await this.reviewsService.create(createReviewDto, req.user);

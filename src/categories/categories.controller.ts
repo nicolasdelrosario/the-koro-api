@@ -9,7 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { FindOneParams } from 'src/utility/common/entities/find-one-params.entity';
-import type { IRequest } from 'src/utility/common/interfaces/request.interface';
+import type { AuthenticatedRequest } from 'src/utility/common/interfaces/authenticated-request.interface';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -21,7 +21,7 @@ export class CategoriesController {
 
   @Post()
   async create(
-    @Request() req: IRequest,
+    @Request() req: AuthenticatedRequest,
     @Body() createCategoryDto: CreateCategoryDto,
   ): Promise<CategoryEntity> {
     return await this.categoriesService.create(createCategoryDto, req.user);
