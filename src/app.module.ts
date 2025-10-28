@@ -5,11 +5,11 @@ import { dataSourceOptions } from 'db/data-source';
 
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
+import { HealthModule } from './health/health.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { UsersModule } from './users/users.module';
-import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [

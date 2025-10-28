@@ -1,0 +1,11 @@
+{
+  "conventionalCommits.scopes": [
+    "auth",
+    "users",
+    "categories",
+    "products",
+    "reviews",
+    "orders",
+    "health"
+  ]
+}

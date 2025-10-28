@@ -9,7 +9,9 @@ import {
   Request,
 } from '@nestjs/common';
 import { FindOneParams } from 'src/utility/common/entities/find-one-params.entity';
+import { Role } from 'src/utility/common/enums/roles.enum';
 import type { AuthenticatedRequest } from 'src/utility/common/interfaces/authenticated-request.interface';
+import { Roles } from 'src/utility/decorators/roles.decorator';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrdersService } from './orders.service';
@@ -27,16 +29,19 @@ export class OrdersController {
   }
 
   @Get()
+  @Roles(Role.ADMIN)
   async findAll() {
     return await this.ordersService.findAll();
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN)
   async findOne(@Param() params: FindOneParams) {
     return await this.ordersService.findOneById(params.id);
   }
 
   @Patch(':id')
+  @Roles(Role.ADMIN)
   async update(
     @Param() params: FindOneParams,
     @Request() req: AuthenticatedRequest,
@@ -50,6 +55,7 @@ export class OrdersController {
   }
 
   @Patch(':id/cancel')
+  @Roles(Role.ADMIN)
   async cancel(
     @Param() params: FindOneParams,
     @Request() req: AuthenticatedRequest,
@@ -58,6 +64,7 @@ export class OrdersController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   async remove(@Param() params: FindOneParams) {
     return await this.ordersService.remove(params.id);
   }
