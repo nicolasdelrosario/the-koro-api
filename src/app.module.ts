@@ -5,6 +5,7 @@ import { dataSourceOptions } from 'db/data-source';
 
 import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { UsersModule } from './users/users.module';
@@ -18,6 +19,7 @@ import { UsersModule } from './users/users.module';
     CategoriesModule,
     ProductsModule,
     ReviewsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

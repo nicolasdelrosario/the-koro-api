@@ -1,4 +1,5 @@
 import { CategoryEntity } from 'src/categories/entities/category.entity';
+import { OrdersProductsEntity } from 'src/orders/entities/orders-products.entity';
 import { ReviewEntity } from 'src/reviews/entities/review.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
@@ -11,7 +12,14 @@ import {
   PrimaryGeneratedColumn,
   Timestamp,
   UpdateDateColumn,
+  ValueTransformer,
 } from 'typeorm';
+
+const numericTransformer: ValueTransformer = {
+  to: (value: number | null): number | null => (value === null ? null : value),
+  from: (value: string | null): number | null =>
+    value === null ? null : parseFloat(value),
+};
 
 @Entity('products')
 export class ProductEntity {
@@ -24,10 +32,16 @@ export class ProductEntity {
   @Column()
   description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: numericTransformer,
+  })
   price: number;
 
-  @Column()
+  @Column({ default: 0 })
   stock: number;
 
   @Column('simple-array')
@@ -45,12 +59,20 @@ export class ProductEntity {
   @ManyToOne(
     () => UserEntity,
     (user) => user.products,
+    {
+      onDelete: 'SET NULL',
+      eager: false,
+    },
   )
   addedBy: UserEntity;
 
   @ManyToOne(
     () => CategoryEntity,
     (category) => category.products,
+    {
+      onDelete: 'SET NULL',
+      eager: true,
+    },
   )
   category: CategoryEntity;
 
@@ -59,4 +81,10 @@ export class ProductEntity {
     (review) => review.product,
   )
   reviews: ReviewEntity[];
+
+  @OneToMany(
+    () => OrdersProductsEntity,
+    (ordersProducts) => ordersProducts.product,
+  )
+  orders: OrdersProductsEntity[];
 }
