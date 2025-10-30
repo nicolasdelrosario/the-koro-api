@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { ProductEntity } from 'src/products/entities/product.entity';
 import {
   Column,
@@ -20,6 +21,7 @@ const numericTransformer: ValueTransformer = {
 
 @Entity('orders_products')
 export class OrdersProductsEntity {
+  @ApiProperty({ format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -29,17 +31,22 @@ export class OrdersProductsEntity {
     scale: 2,
     transformer: numericTransformer,
   })
+  @ApiProperty({ type: Number, example: 9.99 })
   unitPrice: number;
 
+  @ApiProperty({ type: Number })
   @Column()
   quantity: number;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Timestamp;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Timestamp;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Timestamp;
 
@@ -48,6 +55,7 @@ export class OrdersProductsEntity {
     (order) => order.products,
     { onDelete: 'CASCADE' },
   )
+  @ApiProperty({ type: () => OrderEntity })
   order: OrderEntity;
 
   @ManyToOne(
@@ -55,5 +63,6 @@ export class OrdersProductsEntity {
     (product) => product.orders,
     { eager: true },
   )
+  @ApiProperty({ type: () => ProductEntity })
   product: ProductEntity;
 }

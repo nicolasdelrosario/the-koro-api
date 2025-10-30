@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -18,27 +19,35 @@ import { ShippingEntity } from './shipping.entity';
 
 @Entity('orders')
 export class OrderEntity {
+  @ApiProperty({ format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   orderAt: Date;
 
+  @ApiProperty({ enum: OrderStatus })
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PROCESSING })
   status: OrderStatus;
 
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
   @Column({ type: 'timestamp', nullable: true })
   shippedAt: Date;
 
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
   @Column({ type: 'timestamp', nullable: true })
   deliveredAt: Date;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Timestamp;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Timestamp;
 
+  @ApiProperty({ type: String, format: 'date-time' })
   @DeleteDateColumn({ type: 'timestamp' })
   deletedAt: Timestamp;
 
@@ -51,6 +60,7 @@ export class OrderEntity {
     },
   )
   @JoinColumn()
+  @ApiProperty({ type: () => UserEntity, nullable: true })
   updatedBy: UserEntity;
 
   @OneToOne(
@@ -62,6 +72,7 @@ export class OrderEntity {
     },
   )
   @JoinColumn()
+  @ApiProperty({ type: () => ShippingEntity })
   shipping: ShippingEntity;
 
   @OneToMany(
@@ -72,6 +83,7 @@ export class OrderEntity {
       eager: true,
     },
   )
+  @ApiProperty({ type: () => OrdersProductsEntity, isArray: true })
   products: OrdersProductsEntity[];
 
   @ManyToOne(
@@ -83,8 +95,10 @@ export class OrderEntity {
     },
   )
   @JoinColumn()
+  @ApiProperty({ type: () => UserEntity })
   orderBy: UserEntity;
 
+  @ApiProperty({ type: Number })
   get total(): number {
     if (!this.products || this.products.length === 0) return 0;
     return this.products.reduce(
