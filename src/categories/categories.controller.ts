@@ -86,7 +86,7 @@ export class CategoriesController {
     summary: 'List Category by ID',
     description: 'Public endpoint.',
   })
-    @ApiParam({
+  @ApiParam({
     name: 'id',
     description: 'Category ID',
     schema: { type: 'string', format: 'uuid' },

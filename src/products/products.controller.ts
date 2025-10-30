@@ -83,7 +83,7 @@ export class ProductsController {
     summary: 'List Product by ID',
     description: 'Public endpoint.',
   })
-      @ApiParam({
+  @ApiParam({
     name: 'id',
     description: 'Product ID',
     schema: { type: 'string', format: 'uuid' },
@@ -104,7 +104,7 @@ export class ProductsController {
     summary: 'Update Product',
     description: 'Admin-only endpoint.',
   })
-        @ApiParam({
+  @ApiParam({
     name: 'id',
     description: 'Product ID',
     schema: { type: 'string', format: 'uuid' },
@@ -140,7 +140,7 @@ export class ProductsController {
     summary: 'Delete Product',
     description: 'Admin-only endpoint.',
   })
-        @ApiParam({
+  @ApiParam({
     name: 'id',
     description: 'Product ID',
     schema: { type: 'string', format: 'uuid' },
