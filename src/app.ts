@@ -19,6 +19,13 @@ export async function bootstrap() {
 
   app.setGlobalPrefix('api/v1');
 
+  app.enableCors({
+    origin: [process.env.FRONTEND_URL],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  });
+
   const config = new DocumentBuilder()
     .setTitle('The Koro API')
     .setDescription(
@@ -47,4 +54,6 @@ export async function bootstrap() {
   const port = Number(process.env.PORT) || 3000;
 
   await app.listen(port);
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
