@@ -78,6 +78,27 @@ export class ProductsService {
     return product;
   }
 
+  async findAllByCategory(id: string): Promise<ProductEntity[]> {
+    const category = await this.categoriesService.findOneById(id);
+
+    return await this.productRepository.find({
+      where: { category: { id: category.id } },
+      relations: ['addedBy', 'category'],
+      select: {
+        addedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        category: {
+          id: true,
+          title: true,
+        },
+      },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async update(
     id: string,
     updateProductDto: UpdateProductDto,

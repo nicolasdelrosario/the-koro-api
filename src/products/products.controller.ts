@@ -97,6 +97,26 @@ export class ProductsController {
     return await this.productsService.findOneById(params.id);
   }
 
+  @Get('category/:id')
+  @Public()
+  @ApiOperation({
+    summary: 'List Products by Category ID',
+    description: 'Public endpoint.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Category ID',
+    schema: { type: 'string', format: 'uuid' },
+  })
+  @ApiOkResponse({ description: 'List of products', type: [ProductEntity] })
+  @ApiNotFoundResponse({
+    description: 'Category not found',
+    type: NotFoundResponseDto,
+  })
+  async findAllByCategory(@Param('id') id: string): Promise<ProductEntity[]> {
+    return await this.productsService.findAllByCategory(id);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiBearerAuth()
