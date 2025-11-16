@@ -84,6 +84,23 @@ export class OrdersController {
     return await this.ordersService.findAll();
   }
 
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'List My Orders',
+    description: 'Authenticated endpoint. Lists orders created by the user.',
+  })
+  @ApiOkResponse({ description: 'List of my orders', type: [OrderEntity] })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing token',
+    type: UnauthorizedResponseDto,
+  })
+  async findMyOrders(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<OrderEntity[]> {
+    return await this.ordersService.findMyOrders(req.user);
+  }
+
   @Get(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({

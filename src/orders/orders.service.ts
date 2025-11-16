@@ -121,6 +121,19 @@ export class OrdersService {
     });
   }
 
+  async findMyOrders(user: JwtPayload): Promise<OrderEntity[]> {
+    return await this.orderRepository.find({
+      where: { orderBy: { id: user.sub } },
+      relations: {
+        shipping: true,
+        orderBy: true,
+        products: { product: true },
+        updatedBy: true,
+      },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async findOneById(id: string) {
     const order = await this.orderRepository.findOne({
       where: { id },
