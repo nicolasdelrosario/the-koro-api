@@ -11,7 +11,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -23,7 +22,6 @@ import {
 } from '@nestjs/swagger';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { BadRequestResponseDto } from 'src/utility/common/dto/bad-request-response.dto';
-import { ConflictResponseDto } from 'src/utility/common/dto/conflict-response.dto';
 import { ForbiddenResponseDto } from 'src/utility/common/dto/forbidden-response.dto';
 import { NotFoundResponseDto } from 'src/utility/common/dto/not-found-response.dto';
 import { UnauthorizedResponseDto } from 'src/utility/common/dto/unauthorized-response.dto';
@@ -64,10 +62,6 @@ export class ReviewsController {
     description: 'Product not found',
     type: NotFoundResponseDto,
   })
-  @ApiConflictResponse({
-    description: 'User already reviewed this product',
-    type: ConflictResponseDto,
-  })
   async create(
     @Request() req: AuthenticatedRequest,
     @Body() createReviewDto: CreateReviewDto,
@@ -84,6 +78,23 @@ export class ReviewsController {
   @ApiOkResponse({ description: 'List of reviews', type: [ReviewEntity] })
   async findAll(): Promise<ReviewEntity[]> {
     return await this.reviewsService.findAll();
+  }
+
+  @Get('me')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'List My Reviews',
+    description: 'Authenticated endpoint. Lists reviews created by the user.',
+  })
+  @ApiOkResponse({ description: 'List of my reviews', type: [ReviewEntity] })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing token',
+    type: UnauthorizedResponseDto,
+  })
+  async findMyReviews(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<ReviewEntity[]> {
+    return await this.reviewsService.findMyReviews(req.user);
   }
 
   @Get('product/:id')
