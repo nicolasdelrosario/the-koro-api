@@ -110,10 +110,40 @@ export class OrdersService {
       relations: {
         shipping: true,
         orderBy: true,
-        products: {
-          product: true,
-        },
+        products: { product: true },
         updatedBy: true,
+      },
+      select: {
+        shipping: {
+          id: true,
+          phone: true,
+          name: true,
+          address: true,
+          city: true,
+          postCode: true,
+          state: true,
+          country: true,
+        },
+        orderBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        updatedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        products: {
+          id: true,
+          unitPrice: true,
+          quantity: true,
+          product: {
+            id: true,
+            title: true,
+            images: true,
+          },
+        },
       },
       order: {
         createdAt: 'DESC',
@@ -130,6 +160,38 @@ export class OrdersService {
         products: { product: true },
         updatedBy: true,
       },
+      select: {
+        shipping: {
+          id: true,
+          phone: true,
+          name: true,
+          address: true,
+          city: true,
+          postCode: true,
+          state: true,
+          country: true,
+        },
+        orderBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        updatedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        products: {
+          id: true,
+          unitPrice: true,
+          quantity: true,
+          product: {
+            id: true,
+            title: true,
+            images: true,
+          },
+        },
+      },
       order: { createdAt: 'DESC' },
     });
   }
@@ -140,10 +202,42 @@ export class OrdersService {
       relations: {
         shipping: true,
         orderBy: true,
-        products: {
-          product: true,
-        },
+        products: { product: true },
         updatedBy: true,
+      },
+      select: {
+        shipping: {
+          id: true,
+          phone: true,
+          name: true,
+          address: true,
+          city: true,
+          postCode: true,
+          state: true,
+          country: true,
+        },
+        orderBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        updatedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        products: {
+          id: true,
+          unitPrice: true,
+          quantity: true,
+          product: {
+            id: true,
+            title: true,
+            price: true,
+            stock: true,
+            images: true,
+          },
+        },
       },
     });
 

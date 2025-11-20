@@ -16,6 +16,7 @@ import {
 import { OrderStatus } from '../enums/order-status.enum';
 import { OrdersProductsEntity } from './orders-products.entity';
 import { ShippingEntity } from './shipping.entity';
+import { Expose } from 'class-transformer';
 
 @Entity('orders')
 export class OrderEntity {
@@ -99,6 +100,7 @@ export class OrderEntity {
   orderBy: UserEntity;
 
   @ApiProperty({ type: Number })
+  @Expose()
   get total(): number {
     if (!this.products || this.products.length === 0) return 0;
     return this.products.reduce(
