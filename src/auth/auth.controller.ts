@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -23,6 +24,7 @@ import { AuthService } from './auth.service';
 import { AccessTokenDto } from './dto/access-token.dto';
 import { JwtPayloadDto } from './dto/jwt-payload.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @ApiTags('Auth')
@@ -81,5 +83,28 @@ export class AuthController {
   })
   getProfile(@Request() req: AuthenticatedRequest) {
     return req.user;
+  }
+
+  @Patch('profile')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update Profile',
+    description:
+      'Updates the user profile (name/email) and returns a fresh JWT payload.',
+  })
+  @ApiOkResponse({ description: 'JWT access token', type: AccessTokenDto })
+  @ApiBadRequestResponse({
+    description: 'Bad Request',
+    type: BadRequestResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid or missing token',
+    type: UnauthorizedResponseDto,
+  })
+  updateProfile(
+    @Request() req: AuthenticatedRequest,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return this.authService.updateProfile(req.user, updateProfileDto);
   }
 }

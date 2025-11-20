@@ -5,6 +5,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -54,5 +55,37 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async updateProfile(
+    userPayload: JwtPayload,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOneById(userPayload.sub);
+    if (!user) throw new BadRequestException('User not found');
+
+    if (updateProfileDto.email && updateProfileDto.email !== user.email) {
+      const existing = await this.usersService.findOneByEmail(
+        updateProfileDto.email,
+      );
+
+      if (existing && existing.id !== user.id) {
+        throw new BadRequestException('Email already exists');
+      }
+    }
+
+    user.name = updateProfileDto.name ?? user.name;
+    user.email = updateProfileDto.email ?? user.email;
+
+    const saved = await this.usersService.save(user);
+
+    const payload: JwtPayload = {
+      sub: saved.id,
+      email: saved.email,
+      name: saved.name,
+      roles: saved.roles,
+    };
+
+    return this.accessToken(payload);
   }
 }
