@@ -82,7 +82,7 @@ export class ProductEntity {
     (category) => category.products,
     {
       onDelete: 'SET NULL',
-      eager: false, 
+      eager: false,
     },
   )
   @ApiProperty({ type: () => CategoryEntity, nullable: true })

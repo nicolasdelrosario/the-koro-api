@@ -70,7 +70,7 @@ export class ReviewsService {
     });
   }
 
-    async findMyReviews(user: JwtPayload): Promise<ReviewEntity[]> {
+  async findMyReviews(user: JwtPayload): Promise<ReviewEntity[]> {
     return await this.reviewRepository.find({
       where: { user: { id: user.sub } },
       relations: ['product', 'user'],

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -16,7 +17,6 @@ import {
 import { OrderStatus } from '../enums/order-status.enum';
 import { OrdersProductsEntity } from './orders-products.entity';
 import { ShippingEntity } from './shipping.entity';
-import { Expose } from 'class-transformer';
 
 @Entity('orders')
 export class OrderEntity {
