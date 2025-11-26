@@ -49,75 +49,75 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-async findAll(
-  query?: FindProductsQueryDto,
-): Promise<PaginatedProductsResponseDto> {
-  const page = query?.page ?? 1;
-  const limit = query?.limit ?? 12;
-  const skip = (page - 1) * limit;
+  async findAll(
+    query?: FindProductsQueryDto,
+  ): Promise<PaginatedProductsResponseDto> {
+    const page = query?.page ?? 1;
+    const limit = query?.limit ?? 12;
+    const skip = (page - 1) * limit;
 
-  const sortBy = query?.sortBy ?? ProductsSortBy.CREATED_AT;
-  const order = query?.order ?? SortOrder.DESC;
+    const sortBy = query?.sortBy ?? ProductsSortBy.CREATED_AT;
+    const order = query?.order ?? SortOrder.DESC;
 
-  const baseFilter: FindOptionsWhere<ProductEntity> = {};
+    const baseFilter: FindOptionsWhere<ProductEntity> = {};
 
-  if (query?.categoryId) {
-    baseFilter.category = { id: query.categoryId };
-  }
+    if (query?.categoryId) {
+      baseFilter.category = { id: query.categoryId };
+    }
 
-  if (query?.priceMin != null && query?.priceMax != null) {
-    baseFilter.price = Between(query.priceMin, query.priceMax);
-  } else if (query?.priceMin != null) {
-    baseFilter.price = MoreThanOrEqual(query.priceMin);
-  } else if (query?.priceMax != null) {
-    baseFilter.price = LessThanOrEqual(query.priceMax);
-  }
+    if (query?.priceMin != null && query?.priceMax != null) {
+      baseFilter.price = Between(query.priceMin, query.priceMax);
+    } else if (query?.priceMin != null) {
+      baseFilter.price = MoreThanOrEqual(query.priceMin);
+    } else if (query?.priceMax != null) {
+      baseFilter.price = LessThanOrEqual(query.priceMax);
+    }
 
-  if (query?.inStock) {
-    baseFilter.stock = MoreThan(0);
-  }
+    if (query?.inStock) {
+      baseFilter.stock = MoreThan(0);
+    }
 
-  const where: FindOptionsWhere<ProductEntity>[] = [];
+    const where: FindOptionsWhere<ProductEntity>[] = [];
 
-  if (query?.q) {
-    const like = `%${query.q}%`;
-    where.push(
-      { ...baseFilter, title: ILike(like) },
-      { ...baseFilter, description: ILike(like) },
-    );
-  } else {
-    where.push(baseFilter);
-  }
+    if (query?.q) {
+      const like = `%${query.q}%`;
+      where.push(
+        { ...baseFilter, title: ILike(like) },
+        { ...baseFilter, description: ILike(like) },
+      );
+    } else {
+      where.push(baseFilter);
+    }
 
-  const [products, total] = await this.productRepository.findAndCount({
-    where,
-    relations: ['addedBy', 'category'],
-    select: {
-      addedBy: {
-        id: true,
-        name: true,
-        email: true,
+    const [products, total] = await this.productRepository.findAndCount({
+      where,
+      relations: ['addedBy', 'category'],
+      select: {
+        addedBy: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        category: {
+          id: true,
+          title: true,
+        },
       },
-      category: {
-        id: true,
-        title: true,
-      },
-    },
-    order: { [sortBy]: order },
-    skip,
-    take: limit,
-  });
+      order: { [sortBy]: order },
+      skip,
+      take: limit,
+    });
 
-  const meta = {
-    totalItems: total,
-    itemCount: products.length,
-    itemsPerPage: limit,
-    totalPages: Math.ceil(total / limit) || 1,
-    currentPage: page,
-  };
+    const meta = {
+      totalItems: total,
+      itemCount: products.length,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(total / limit) || 1,
+      currentPage: page,
+    };
 
-  return { data: products, meta };
-}
+    return { data: products, meta };
+  }
 
   async findOneById(id: string): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({
