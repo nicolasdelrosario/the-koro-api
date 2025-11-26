@@ -2,9 +2,21 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 import { CategoriesService } from 'src/categories/categories.service';
+import { ProductsSortBy } from 'src/products/enums/products-sort-by.enum';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { SortOrder } from 'src/utility/common/enums/sort-order.enum';
+import {
+  Between,
+  FindOptionsWhere,
+  ILike,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FindProductsQueryDto } from './dto/find-products.query.dto';
+import { PaginatedProductsResponseDto } from './dto/paginated-products-response.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
 
@@ -37,22 +49,75 @@ export class ProductsService {
     return await this.productRepository.save(product);
   }
 
-  async findAll(): Promise<ProductEntity[]> {
-    return await this.productRepository.find({
-      relations: ['addedBy', 'category'],
-      select: {
-        addedBy: {
-          id: true,
-          name: true,
-          email: true,
-        },
-        category: {
-          id: true,
-          title: true,
-        },
-      },
-    });
+async findAll(
+  query?: FindProductsQueryDto,
+): Promise<PaginatedProductsResponseDto> {
+  const page = query?.page ?? 1;
+  const limit = query?.limit ?? 12;
+  const skip = (page - 1) * limit;
+
+  const sortBy = query?.sortBy ?? ProductsSortBy.CREATED_AT;
+  const order = query?.order ?? SortOrder.DESC;
+
+  const baseFilter: FindOptionsWhere<ProductEntity> = {};
+
+  if (query?.categoryId) {
+    baseFilter.category = { id: query.categoryId };
   }
+
+  if (query?.priceMin != null && query?.priceMax != null) {
+    baseFilter.price = Between(query.priceMin, query.priceMax);
+  } else if (query?.priceMin != null) {
+    baseFilter.price = MoreThanOrEqual(query.priceMin);
+  } else if (query?.priceMax != null) {
+    baseFilter.price = LessThanOrEqual(query.priceMax);
+  }
+
+  if (query?.inStock) {
+    baseFilter.stock = MoreThan(0);
+  }
+
+  const where: FindOptionsWhere<ProductEntity>[] = [];
+
+  if (query?.q) {
+    const like = `%${query.q}%`;
+    where.push(
+      { ...baseFilter, title: ILike(like) },
+      { ...baseFilter, description: ILike(like) },
+    );
+  } else {
+    where.push(baseFilter);
+  }
+
+  const [products, total] = await this.productRepository.findAndCount({
+    where,
+    relations: ['addedBy', 'category'],
+    select: {
+      addedBy: {
+        id: true,
+        name: true,
+        email: true,
+      },
+      category: {
+        id: true,
+        title: true,
+      },
+    },
+    order: { [sortBy]: order },
+    skip,
+    take: limit,
+  });
+
+  const meta = {
+    totalItems: total,
+    itemCount: products.length,
+    itemsPerPage: limit,
+    totalPages: Math.ceil(total / limit) || 1,
+    currentPage: page,
+  };
+
+  return { data: products, meta };
+}
 
   async findOneById(id: string): Promise<ProductEntity> {
     const product = await this.productRepository.findOne({

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
 } from '@nestjs/common';
 import {
@@ -30,6 +31,8 @@ import { Role } from 'src/utility/common/enums/roles.enum';
 import type { AuthenticatedRequest } from 'src/utility/common/interfaces/authenticated-request.interface';
 import { Roles } from 'src/utility/decorators/roles.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FindProductsQueryDto } from './dto/find-products.query.dto';
+import { PaginatedProductsResponseDto } from './dto/paginated-products-response.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductEntity } from './entities/product.entity';
 import { ProductsService } from './products.service';
@@ -70,11 +73,17 @@ export class ProductsController {
   @Public()
   @ApiOperation({
     summary: 'List Products',
-    description: 'Public endpoint.',
+    description: 'Public endpoint with pagination, sorting, and search.',
   })
-  @ApiOkResponse({ description: 'List of products', type: [ProductEntity] })
-  async findAll(): Promise<ProductEntity[]> {
-    return await this.productsService.findAll();
+  @ApiOkResponse({
+    description: 'Paginated list of products',
+    type: PaginatedProductsResponseDto,
+  })
+  async findAll(
+    @Request() _req: AuthenticatedRequest,
+    @Query() query: FindProductsQueryDto,
+  ): Promise<PaginatedProductsResponseDto> {
+    return await this.productsService.findAll(query);
   }
 
   @Get(':id')
